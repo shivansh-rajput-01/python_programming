@@ -5,3 +5,5 @@ for i in range(1, 100):
     if(i % 2 != 0):
         continue # skip printing when number is odd
     print(i)
+
+# this is example of continue keyword
