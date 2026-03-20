@@ -63,3 +63,5 @@ print(f"var1 = {var1}, var2 = {var2}, var3 = {var3}")
 var1, _, _, var3 = (1, 2, 3, 4) # var1 = 1 and var3 = 4 all mid values skipped by using "_"
 # note here "_" is just a variable that is overwritten multiple times to skip values
 print(f"var1 = {var1}, var2 = {var2}")
+
+# this is for_loop basics
