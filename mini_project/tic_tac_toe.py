@@ -15,7 +15,12 @@ def dispaly_board(board):
 
 def choice_input(c):
     if mode == 2 and c == 2:
-        cm = computer_move()
+        if difficulty == 1:
+            cm = computer_move()
+        elif difficulty == 2:
+            cm = computer_move_pro(game_data, 1)
+        elif difficulty == 3:
+            cm = computer_move_pro(game_data, 2)
         print("chance of Computer:", cm)
         return cm
     again = False
@@ -74,7 +79,7 @@ def is_valid_place(place):
 
 # function to check for win
 
-def check_win():
+def check_win(game_data):
     # check for row and column winning condition
     for i in range(3):
         # row conditions
@@ -109,7 +114,7 @@ def display_result(result):
     else:
         print(f"-----------Congratulations {user2} won !!!-------------")
 
-# function to choose computer move
+# function to choose computer move in easy mode
 
 def computer_move():
     while True:
@@ -117,6 +122,153 @@ def computer_move():
         is_valid = is_valid_place(place)
         if is_valid[0]:
             return place
+
+# function to check edge case
+
+def check_fork():
+    if game_data[1][1] == ' ':
+        return True
+    return False
+
+
+# function to choose best possible move
+
+def check_moves():
+    probability = [0, 0, 0, 0, 0, 0, 0, 0]
+    for i in range(3):
+        if (game_data[i][0] == '0' or game_data[i][0] == ' ') and (game_data[i][1] == '0' or game_data[i][1] == ' ') and (game_data[i][2] == '0' or game_data[i][2] == ' '):
+            probability[i] = 1
+            if game_data[i][0] == "0":
+                probability[i] += 1
+            if game_data[i][1] == "0":
+                probability[i] += 1
+            if game_data[i][2] == "0":
+                probability[i] += 1
+        if (game_data[0][i] == '0' or game_data[0][i] == ' ') and (game_data[1][i] == '0' or game_data[1][i] == ' ') and (game_data[2][i] == '0' or game_data[2][i] == ' '):
+            probability[i+3] = 1
+            if game_data[0][i] == "0":
+                probability[i+3] += 1
+            if game_data[1][i] == "0":
+                probability[i+3] += 1
+            if game_data[2][i] == "0":
+                probability[i+3] += 1
+    if (game_data[0][0] == "0" or game_data[0][0] == " ") and (game_data[1][1] == "0" or game_data[1][1] == " ") and (game_data[2][2]== "0" or game_data[2][2] == " "):
+        probability[6] = 1
+        if game_data[0][0] == "0":
+            probability[6] += 1
+        if game_data[1][1] == "0":
+            probability[6] += 1
+        if game_data[2][2] == "0":
+            probability[6] += 1
+    if (game_data[0][2] == "0" or game_data[0][2] == " ") and (game_data[1][1] == "0" or game_data[1][1] == " ") and (game_data[2][0]== "0" or game_data[2][0] == " "):
+        probability[7] = 1
+        if game_data[0][2] == "0":
+            probability[7] += 1
+        if game_data[1][1] == "0":
+            probability[7] += 1
+        if game_data[2][0] == "0":
+            probability[7] += 1
+    if check_fork():
+        probability[1] += 5
+    return probability
+    
+
+
+# function to choose computer move in medium mode
+
+def computer_move_pro(l, d):
+    # loop to make move if computer is winning
+    for i in range(3):
+        for j in range(3):
+            if l[i][j] == ' ':
+                l[i][j] = '0'
+                if check_win(l) == 2:
+                    l[i][j] = ' '
+                    return i*3 + j + 1
+                l[i][j] = ' '
+    # loop to block user win chance
+    for i in range(3):
+        for j in range(3):
+            if l[i][j] == ' ':
+                l[i][j] = 'X'
+                if check_win(l) == 1:
+                    l[i][j] = ' '
+                    return i*3 + j + 1
+                l[i][j] = ' '
+    # if nothing is case i.e. no move can make computer win and no move can make user win choose best possible choice
+    if d == 1:
+        print("random choice in medium mode")
+        return computer_move()
+    elif d == 2:
+        move = check_moves()
+        i = 0
+        max1 = -1
+        max_idx = -1
+        while i < len(move):
+            if move[i] > max1:
+                max_idx = i
+                max1 = move[i]
+            i += 1
+        if max_idx == 0: # row 1
+            if game_data[0][0] == ' ':
+                return 1
+            if game_data[0][2] == ' ':
+                return 3
+            if game_data[0][1] == ' ':
+                return 2
+        elif max_idx == 1: # row 2
+            if game_data[1][1] == ' ':
+                return 5
+            if game_data[1][0] == ' ':
+                return 4
+            if game_data[1][2] == ' ':
+                return 6
+        elif max_idx == 2: # row 3
+            if game_data[2][0] == ' ':
+                return 7
+            if game_data[2][1] == ' ':
+                return 8
+            if game_data[2][2] == ' ':
+                return 9
+        elif max_idx == 3: # col 1
+            if game_data[0][0] == ' ':
+                return 1
+            if game_data[1][0] == ' ':
+                return 4
+            if game_data[2][0] == ' ':
+                return 7
+        elif max_idx == 4: # col 2
+            if game_data[1][1] == ' ':
+                return 5
+            if game_data[0][1] == ' ':
+                return 2
+            if game_data[2][1] == ' ':
+                return 8
+        elif max_idx == 5: # col 3
+            if game_data[0][2] == ' ':
+                return 3
+            if game_data[1][2] == ' ':
+                return 6
+            if game_data[2][2] == ' ':
+                return 9
+        elif max_idx == 6: # leading diagonal
+            if game_data[1][1] == ' ':
+                return 5
+            if game_data[0][0] == ' ':
+                return 1
+            if game_data[2][2] == ' ':
+                return 9
+        elif max_idx == 7: # second diagonal
+            if game_data[0][2] == ' ':
+                return 3
+            if game_data[1][1] == ' ':
+                return 5
+            if game_data[2][0] == ' ':
+                return 7
+        return computer_move()
+
+        
+
 
 
 sample_data = [
@@ -142,6 +294,7 @@ print("------ This is sample board containing number you should choose to place 
 dispaly_board(sample_data)
 
 re_input = False
+difficulty = None
 
 while True:
     if not re_input:
@@ -151,6 +304,11 @@ while True:
     if mode.isdigit():
         mode = int(mode)
     if mode == 1 or mode == 2:
+        if mode == 2:
+            difficulty = int(input("Enter 1 for easy mode, 2 for medium mode and 3 for difficult mode:"))
+            while difficulty != 1 and difficulty != 2 and difficulty != 3:
+                print("Choose correct option please")
+                difficulty = int(input("Enter 1 for easy mode, 2 for medium mode and 3 for difficult mode:"))
         break
     re_input = True
 
@@ -171,8 +329,12 @@ print(f"symbol for {user2} is 0")
 
 chance = 1 # 1 -> player 1 and 2 -> player 2
 
-i = 1
-while i <= 9:
+i = random.randint(1, 2)
+if i == 1:
+    end = 9
+elif i == 2:
+    end = 10
+while i <= end:
     if i % 2 != 0:
         chance = 1
     else:
@@ -182,7 +344,7 @@ while i <= 9:
     if msg != "success":
         print(msg)
         i -= 1
-    result = check_win()
+    result = check_win(game_data)
     if result == 1 or result == 2:
         display_result(result)
         break
