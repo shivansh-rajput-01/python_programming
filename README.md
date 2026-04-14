@@ -26,5 +26,3 @@ My current goal is to build a robust foundation in Python core principles before
 ---
 *Maintained by Shivansh Rajput*
 
-## My GitHub Stats
-![Your GitHub Stats](https://github-readme-stats.vercel.app/api?username=shivansh-rajput-01&show_icons=true&theme=radical)
